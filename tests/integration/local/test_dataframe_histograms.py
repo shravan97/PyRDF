@@ -10,8 +10,8 @@ class HistogramsFromRDF(unittest.TestCase):
         ROOT.gRandom.SetSeed(1)
         tdf = PyRDF.RDataFrame(64)
         g = tdf.Define("r","gRandom->Gaus(0,1)")
-        h1Proxy = g.Histo1D(("h1","h1",64, -2., 2.),"r")
-        h1 = h1Proxy.GetValue()
+        h1 = g.Histo1D(("h1","h1",64, -2., 2.),"r")
+        h1.GetEntries() # Trigger event-loop
 
         cppCode = 'gRandom->SetSeed(1);' + \
                   'ROOT::RDataFrame tdf(64);' + \
