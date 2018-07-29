@@ -63,6 +63,9 @@ class Local(Backend):
         values[0].GetValue() # Trigger event-loop
 
         for i in range(len(values)):
-            # Set the values of action nodes to
-            # 'TResultPtr's obtained
-            nodes[i].value = values[i]
+            # The type of the value of the action node
+            value_type = type(values[i].GetValue())
+            # The `value_type` is required here because,
+            # after a call to `GetValue`, the values die
+            # along with the RResultPtrs
+            nodes[i].value = value_type(values[i].GetValue())
