@@ -42,7 +42,7 @@ pidf = tdf.Define("x", "gRandom->Uniform(-1.0, 1.0)") \
 ## Therefore, we can approximate pi with 4 times the number of points inside
 ## the unit circle over the total number of points:
 
-incircle = pidf.Filter("r <= 1.0").Count().GetValue()
+incircle = pidf.Filter("r <= 1.0").Count()
 
 pi_approx = 4.0 * incircle / npoints
 

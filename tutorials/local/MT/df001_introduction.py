@@ -51,10 +51,10 @@ entries1 = d.Filter(cutb1) \
             .Filter(cutb1b2) \
             .Count();
 
-print("%s entries passed all filters" %entries1.GetValue())
+print("%s entries passed all filters" %entries1)
 
 entries2 = d.Filter("b1 < 5.").Count();
-print("%s entries passed all filters" %entries2.GetValue())
+print("%s entries passed all filters" %entries2)
 
 # `Min`, `Max` and `Mean` actions
 # These actions allow to retrieve statistical information about the entries
@@ -64,7 +64,7 @@ minVal = b1b2_cut.Min('b1')
 maxVal = b1b2_cut.Max('b1')
 meanVal = b1b2_cut.Mean('b1')
 nonDefmeanVal = b1b2_cut.Mean("b2")
-print("The mean is always included between the min and the max: %s <= %s <= %s" %(minVal.GetValue(), meanVal.GetValue(), maxVal.GetValue()))
+print("The mean is always included between the min and the max: %s <= %s <= %s" %(minVal, meanVal, maxVal))
 
 # `Histo1D` action
 # The `Histo1D` action allows to fill an histogram. It returns a TH1F filled
@@ -90,9 +90,9 @@ evts_cutb1_result = cutb1_result.Count()
 evts_cutb1b2_result = cutb1b2_result.Count()
 evts_cutb1_cutb1b2_result = cutb1_cutb1b2_result.Count()
 
-print("Events passing cutb1: %s" %evts_cutb1_result.GetValue())
-print("Events passing cutb1b2: %s" %evts_cutb1b2_result.GetValue())
-print("Events passing both: %s" %evts_cutb1_cutb1b2_result.GetValue())
+print("Events passing cutb1: %s" %evts_cutb1_result)
+print("Events passing cutb1b2: %s" %evts_cutb1b2_result)
+print("Events passing both: %s" %evts_cutb1_cutb1b2_result)
 
 # Calculating quantities starting from existing columns
 # Often, operations need to be carried out on quantities calculated starting
@@ -110,4 +110,4 @@ print("Events passing both: %s" %evts_cutb1_cutb1b2_result.GetValue())
 entries_sum = d.Define('sum', 'b2 + b1') \
                .Filter('sum > 4.2') \
                .Count()
-print(entries_sum.GetValue())
+print(entries_sum)
