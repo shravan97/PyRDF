@@ -23,4 +23,4 @@ class IncludesLocalTest(unittest.TestCase):
 
         # The final answer should be the number of integers
         # less than 5, which is 5.
-        self.assertEqual(count.GetValue(), 5)
+        self.assertEqual(count, 5)
