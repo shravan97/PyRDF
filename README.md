@@ -43,7 +43,25 @@ PyRDF has a very simple and intuitive programming model. Here are the 5 simple s
 
 This is how you convert the above steps into code :
 
-![](images/image1.png)
+```python
+import PyRDF
+
+# Choose your backend
+PyRDF.use('spark')
+
+# Initialize a RDataFrame object
+rdf = PyRDF.RDataFrame(...args...)
+
+# Define your operations
+rdf_op = rdf.Define(...)
+rdf_filtered = rdf_op.Filter(...)
+num_rows = rdf_filtered.Count()
+my_histogram = rdf_filtered.Histo1D(...)
+
+# Simply Display your required output
+print(num_rows)
+my_histogram.Draw()
+```
 
 Demos
 -----
