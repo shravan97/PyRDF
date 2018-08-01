@@ -1,7 +1,7 @@
 # Google Summer of Code 2018 - Report
 <hr/>
 ## Distributed Big Data Analysis with RDataFrame
-
+<hr/>
 
 Introduction
 ------------
@@ -17,16 +17,13 @@ Installation procedure
 *   You can find ROOT installation instructions here : [https://root.cern.ch/building-root](https://root.cern.ch/building-root)
 
 * If you’re using Python 2, install enum34 as well
-
-	* `pip install enum34`
+	* `pip install enum34`  
 
 * Clone PyRDF from github
-
-	* `git clone https://github.com/shravan97/PyRDF`
+	* `git clone https://github.com/shravan97/PyRDF`  
 
 * Install PyRDF
-
-	* `python setup.py install`
+	* `python setup.py install`  
 
 Usage
 -----
