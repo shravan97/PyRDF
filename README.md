@@ -1,5 +1,5 @@
 # Google Summer of Code 2018 - Report
-
+<hr/>
 ## Distributed Big Data Analysis with RDataFrame
 
 
