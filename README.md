@@ -11,10 +11,11 @@ A Python layer named PyRDFwas built on top of [ROOT’s RDataFrame](https://root
 Installation procedure
 ----------------------
 
-*   Install ROOT library
+* Install ROOT library
+<br/>
+* It is recommended to install the most recent version of ROOT. Nonetheless, the installed version of ROOT at least has to be 6.15
 
-*   It is recommended to install the most recent version of ROOT. Nonetheless, the installed version of ROOT at least has to be 6.15
-*   You can find ROOT installation instructions here : [https://root.cern.ch/building-root](https://root.cern.ch/building-root)
+* You can find ROOT installation instructions here : [https://root.cern.ch/building-root](https://root.cern.ch/building-root)
 
 * If you’re using Python 2, install enum34 as well
 	* `pip install enum34`  
@@ -30,7 +31,7 @@ Usage
 
 The best part about PyRDF’s RDataFrame is that, it has the exact same constructor as that of [PyROOT](https://www.google.com/url?q=https://root.cern.ch/pyroot&sa=D&ust=1533064165174000)’s RDataFrame. So, if you’re used to PyROOT’s RDataFrame, you can use the exact same syntax to initialize a RDataFrame object. Only the module imports would differ. Nonetheless, PyRDF’s documentation has all information about its RDataFrame constructor.
 
-PyRDF has a very simple and intuitive programming model. Here are the 5 simple steps you need to follow to get going with PyRDF :
+PyRDF has a very simple and intuitive programming model. Here are the 5 simple steps you need to follow to get started with PyRDF :
 
 *   Import `PyRDF` package
 *   Choose your backend (this could be ‘local’, ‘spark’ or your own backend)
