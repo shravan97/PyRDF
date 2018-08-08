@@ -45,7 +45,7 @@
 				- The mapper recursively traverses through the PyRDF operations graph starting from the `head_node` instance member and recursively executes those operations on the input PyROOT RDataFrame object.
 				- While recursing, it collects the computed values of all action nodes (like `Count`, `Histo1D`, `Histo2D`, ...etc.) and finally returns the entire list (of computed values of action nodes) from the first recursive state.
 				- Take a look at the below picture for some clarity :
-
+				![graph_to_code](images/pyrdf.jpg)
 
 		- `get_action_nodes` 
 			- This does almost the exact same thing as the mapper function, except that, this doesn’t execute the operations and this returns all nodes as they are (as Node objects). The list of nodes returned from this method correspond to the list of values returned from the mapper. Hence, this can be used when you need to set the values of action nodes onto the value data members of the node objects.
@@ -69,6 +69,7 @@
 			- The value of the current node after execution. This is applicable only to action nodes.
 		- `get_head` 
 			- A lambda function that returns the head node of the current computational graph.
+
 	- **Methods**
  		- `__getstate__` 
 			- This method is used to make `Node` objects serializable (pickle-able). This collects children and operation attributes as a Python dictionary (with string keys) and returns the dictionary to the callee. The attribute `get_head` isn’t stored here because it is not required for any computation in the clusters.
