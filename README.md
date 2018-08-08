@@ -6,24 +6,28 @@
 Introduction
 ------------
 
-A Python layer named PyRDFwas built on top of [ROOT’s RDataFrame](https://root.cern/doc/master/classROOT_1_1RDataFrame.html), making it seamless to run RDataFrame operations with any distributed backend and without much effort. PyRDF internally creates a computational graph of all requested operations and executes it using [PyROOT](https://root.cern.ch/pyroot), only when required. Without this Python layer, one has to write a mapperfunction, a reducer function and manually set up a distributed environment (like Spark) to execute the operations on clusters. PyRDF also allows you to create your own backend to execute RDataFrame operations.
+A Python layer named 'PyRDF' was built on top of [ROOT’s RDataFrame](https://root.cern/doc/master/classROOT_1_1RDataFrame.html), making it seamless to run RDataFrame operations with any distributed backend and without much effort. PyRDF internally creates a computational graph of all requested operations and executes it using [PyROOT](https://root.cern.ch/pyroot), only when required. Without this Python layer, one has to write a mapper function, a reducer function and manually set up a distributed environment (like Spark) to execute the operations on clusters. PyRDF also allows you to create your own backend to execute RDataFrame operations.
 
 Installation procedure
 ----------------------
 
-* Install ROOT library
-<br/>
-* It is recommended to install the most recent version of ROOT. Nonetheless, the installed version of ROOT at least has to be 6.15
+* Install ROOT library. It is recommended to install the most recent version of ROOT. Nonetheless, the installed version of ROOT at least has to be `6.15/01`.
+
 
 * You can find ROOT installation instructions here : [https://root.cern.ch/building-root](https://root.cern.ch/building-root)
 
+
 * If you’re using Python 2, install enum34 as well
+
 	* `pip install enum34`  
 
+
 * Clone PyRDF from github
+
 	* `git clone https://github.com/shravan97/PyRDF`  
 
 * Install PyRDF
+
 	* `python setup.py install`  
 
 Usage
