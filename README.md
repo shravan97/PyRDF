@@ -18,16 +18,14 @@ Installation procedure
 
 
 * If you’re using Python 2, install enum34 as well
-
 	* `pip install enum34`  
 
 
 * Clone PyRDF from github
-
 	* `git clone https://github.com/shravan97/PyRDF`  
 
-* Install PyRDF
 
+* Install PyRDF
 	* `python setup.py install`  
 
 Usage
