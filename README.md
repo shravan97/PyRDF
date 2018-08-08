@@ -183,7 +183,8 @@ Information on different backends
 * The configuration dictionary accepts only 'npartitions' and all Spark configuration parameters. For Spark configuration parameters, refer to [Spark docs](https://spark.apache.org/docs/latest/configuration.html).
 * Note that, if the value of 'npartitions' is not set in the config dictionary, then it will be set to the value of `spark.executor.instances` from the config dictionary. If `spark.executor.instances` is also not set in the config dictionary, then `npartitions` will be set to `2`.
 * You can also make a `SparkContext` directly available for use. In such cases, the existing `SparkContext` would be **directly used, even if you pass in configuration parameters**.
-* If you want to run Spark with your own configuration parameters and you're not sure whether a `SparkContext` already exists, then simply run the following before running `PyRDF.use` : 
+* If you want to run Spark with your own configuration parameters and you're not sure whether a `SparkContext` already exists, then simply run the following before running `PyRDF.use` :  
+
 ```python
 from pyspark import SparkContext
 sc = SparkContext.getOrCreate()
