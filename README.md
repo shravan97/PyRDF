@@ -29,8 +29,6 @@ Installation procedure
 Usage
 -----
 
-The best part about PyRDF’s RDataFrame is that, it has the exact same constructor as that of [PyROOT](https://root.cern.ch/pyroot)’s RDataFrame. So, if you’re used to PyROOT’s RDataFrame, you can use the exact same syntax to initialize a RDataFrame object. Only the module imports would differ. Nonetheless, PyRDF’s user documentation has all information about its RDataFrame constructor.
-
 PyRDF has a very simple and intuitive programming model. Here are the 5 simple steps you need to follow to get started with PyRDF :
 
 * Step 1 : Import `PyRDF` package
@@ -77,7 +75,7 @@ The right way to choose a backend is using the `PyRDF.use` method.
 import PyRDF
 PyRDF.use('spark')
 ```
-At the moment, 'local' and 'spark' are the only 2 available backends. More built-in backends and user defined backends will be available in future releases. If you don't choose a backend using `PyRDF.use`, the default backend choice would be 'local'.
+In the current release, 'local' and 'spark' are the only 2 available backends. More built-in backends and user defined backends will be available in future releases. If you don't choose a backend using `PyRDF.use`, the default backend choice would be 'local'.
 
 **Some points to note**
  * If you choose a backend using `PyRDF.use`, you have to do it before making an operation calls to the `RDataFrame` object. Otherwise, it might result in a run-time error.
@@ -114,15 +112,48 @@ rdataframe_1 = PyRDF.RDataFrame(10)
 rdataframe_2 = PyRDF.RDataFrame("myTreeName", "/path/to/my/root/file")
 
 # Example 3
-rdataframe_3 = PyRDF.RDataFrame("myTreeName", ["file1.root", "file2.root"])
+rdataframe_3 = PyRDF.RDataFrame("myTreeName", "http://example.com/file.root")
+
+# Example 4
+rdataframe_4 = PyRDF.RDataFrame("myTreeName", ["file1.root", "file2.root"])
 
 ```
 
 #### Step 4 : Define your operations
+The operations that you can perform depends on the backend that you choose. For example, `Range` works only in the 'local' backend and not any distributed backend. You can find out the list of operations supported by : 
+```python
+import PyRDF
+PyRDF.use('spark')
 
+# This will print the list of supported operations
+print(PyRDF.current_backend.supported_operations)
+```
+* And operations are classified into *actions* and *transformations*. You can find the available transformations and actions in [PyROOT’s RDataFrame documentation](https://root.cern/doc/master/classROOT_1_1RDataFrame.html).
+
+* All the defined operations create a *__computational graph__*. Take a look at the example below that illustrates how a series of operations are converted into a computational graph.
+
+##### Operations
+```python
+import PyRDF
+
+# Initialize a RDataFrame object
+rdf = PyRDF.RDataFrame(...args...)
+
+# Define your operations
+rdf_column_1 = rdf.Define(...) # Transformation
+rdf_column_2 = rdf.Define(...) # Transformation
+rdf_filtered_1 = rdf_column_1.Filter(...) # Transformation
+rdf_count_1 = rdf_filtered_1.Count(...) # Action
+rdf_histogram_1 = rdf_column_2.Histo1D(...) # Action
+```
+##### Computational graph
+![sample_computational_graph](images/pyrdf_sample_graph.jpg)
 
 Working of different backends
 -----------------------------
+#### Local backend
+
+#### Spark backend
 
 Demos
 -----
@@ -138,6 +169,7 @@ TODO
 ----
 
 * Add support for more backends
+* Allow users to pass a `Backend` instance to `PyRDF.use`
 * Add support for accepting C++ mapper functions
 * Create a Jupyter extension at least to indicate the progress in Local execution
 
