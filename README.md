@@ -29,15 +29,15 @@ Installation procedure
 Usage
 -----
 
-The best part about PyRDF’s RDataFrame is that, it has the exact same constructor as that of [PyROOT](https://www.google.com/url?q=https://root.cern.ch/pyroot&sa=D&ust=1533064165174000)’s RDataFrame. So, if you’re used to PyROOT’s RDataFrame, you can use the exact same syntax to initialize a RDataFrame object. Only the module imports would differ. Nonetheless, PyRDF’s documentation has all information about its RDataFrame constructor.
+The best part about PyRDF’s RDataFrame is that, it has the exact same constructor as that of [PyROOT](https://root.cern.ch/pyroot)’s RDataFrame. So, if you’re used to PyROOT’s RDataFrame, you can use the exact same syntax to initialize a RDataFrame object. Only the module imports would differ. Nonetheless, PyRDF’s user documentation has all information about its RDataFrame constructor.
 
 PyRDF has a very simple and intuitive programming model. Here are the 5 simple steps you need to follow to get started with PyRDF :
 
-*   Import `PyRDF` package
-*   Choose your backend (this could be ‘local’, ‘spark’ or your own backend)
-*   Define a RDataFrame object
-*   Define all of your operations
-*   Display your output
+* Step 1 : Import `PyRDF` package
+* Step 2 : Choose your backend (this could be ‘local’, ‘spark’ or your own backend)
+* Step 3 : Define a RDataFrame object
+* Step 4 : Define all of your operations
+* Step 5 : Display your output
 
 This is how you convert the above steps into code :
 
@@ -53,13 +53,76 @@ rdf = PyRDF.RDataFrame(...args...)
 # Define your operations
 rdf_op = rdf.Define(...)
 rdf_filtered = rdf_op.Filter(...)
-num_rows = rdf_filtered.Count()
 my_histogram = rdf_filtered.Histo1D(...)
 
 # Simply Display your required output
-print(num_rows)
 my_histogram.Draw()
 ```
+
+### Explanation of the steps
+#### Step 1 : Importing `PyRDF`
+Importing the `PyRDF` package is as simple as :
+```python
+import PyRDF
+```
+
+Another option here would be to import a particular module or class from `PyRDF`, like this : 
+```python
+from PyRDF import RDataFrame
+```
+
+#### Step 2 : Choosing your backend
+The right way to choose a backend is using the `PyRDF.use` method.
+```python
+import PyRDF
+PyRDF.use('spark')
+```
+At the moment, 'local' and 'spark' are the only 2 available backends. More built-in backends and user defined backends will be available in future releases. If you don't choose a backend using `PyRDF.use`, the default backend choice would be 'local'.
+
+**Some points to note**
+ * If you choose a backend using `PyRDF.use`, you have to do it before making an operation calls to the `RDataFrame` object. Otherwise, it might result in a run-time error.
+
+```python
+import PyRDF
+
+#### This is wrong 
+rdf = PyRDF.RDataFrame(...args...)
+rdf_filtered = PyRDF.Filter(...)
+my_histogram = rdf_filtered.Histo1D(...)
+PyRDF.use('spark')
+
+#### This is correct 
+PyRDF.use('spark')
+rdf = PyRDF.RDataFrame(...args...)
+rdf_filtered = PyRDF.Filter(...)
+my_histogram = rdf_filtered.Histo1D(...)
+```
+
+* If you don't want to switch between backends, always make it a point to select the backend right after importing `PyRDF`.
+* If you want to work in your local environment only, then you don't have to include the `PyRDF.use` statement.
+* `PyRDF.use` also accepts a configuration dictionary (named `config`) along with the backend name. Refer to the user documentation for more information.
+
+#### Step 3 : Create a RDataFrame instance
+The RDataFrame constructor for PyRDF is same as that of PyROOT’s. Hence you can refer to [PyROOT’s RDataFrame documentation](https://root.cern/doc/master/classROOT_1_1RDataFrame.html#a0813d17002d46c962513acb96ddc8d57) for information regarding the constructor. There are also some additional cases that the PyRDF’s RDataFrame constructor supports. Refer to the user documentation for more information.  
+Here are some examples for creating `RDataFrame` instances : 
+```python
+import PyRDF
+# Example 1
+rdataframe_1 = PyRDF.RDataFrame(10)
+
+# Example 2
+rdataframe_2 = PyRDF.RDataFrame("myTreeName", "/path/to/my/root/file")
+
+# Example 3
+rdataframe_3 = PyRDF.RDataFrame("myTreeName", ["file1.root", "file2.root"])
+
+```
+
+#### Step 4 : Define your operations
+
+
+Working of different backends
+-----------------------------
 
 Demos
 -----
@@ -74,9 +137,9 @@ Documentation
 TODO
 ----
 
-*   Add support for more backends
-*   Add support for accepting C++ mapper functions
-*   Create a Jupyter extension at least to indicate the progress in Local execution
+* Add support for more backends
+* Add support for accepting C++ mapper functions
+* Create a Jupyter extension at least to indicate the progress in Local execution
 
 Other links
 -----------
