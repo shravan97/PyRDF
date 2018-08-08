@@ -128,11 +128,11 @@ PyRDF.use('spark')
 # This will print the list of supported operations
 print(PyRDF.current_backend.supported_operations)
 ```
-* And operations are classified into *actions* and *transformations*. You can find the available transformations and actions in [PyROOT’s RDataFrame documentation](https://root.cern/doc/master/classROOT_1_1RDataFrame.html).
+* Operations are classified into *actions* and *transformations*. You can find the available transformations and actions in [PyROOT’s RDataFrame documentation](https://root.cern/doc/master/classROOT_1_1RDataFrame.html).
 
 * All the defined operations create a *__computational graph__*. Take a look at the example below that illustrates how a series of operations are converted into a computational graph.
 
-##### Operations
+##### Defined operations
 ```python
 import PyRDF
 
@@ -149,14 +149,57 @@ rdf_histogram_1 = rdf_column_2.Histo1D(...) # Action
 ##### Computational graph
 ![sample_computational_graph](images/pyrdf_sample_graph.jpg)
 
-Working of different backends
------------------------------
-#### Local backend
+#### Step 5 : Get and display the results
+After you define all the operations, execution will not happen until you make a method call on a `Proxy` object. For example : 
+```python
+import PyRDF
 
-#### Spark backend
+# Initialize a RDataFrame object
+rdf = PyRDF.RDataFrame(...args...)
+
+# Operations
+rdf_histogram = rdf.Histo1D(...)
+
+my_histogram_value = rdf_histogram.GetValue() # Computation happens here 
+
+
+```
+
+* You can apply all the (non-dunder) methods on a proxy object that you would apply on the output value as well. For example, on a `Histo1D` proxy object, you can apply functions like `Draw`, `GetEntries`, `GetMean` ... etc. 
+* If you instead want a reference to the actual value instead of proxy, you use `GetValue`. In the above code snippet, `my_histogram_value` would refer to the actual `ROOT.TH1D` object. In the cases where the output is supposed to be an integer, you'd get a value of the `int` type on a `GetValue` call.
+
+Information on different backends
+-----------------------------
+### Local backend
+* The local backend runs all the computation in your local system.
+* After execution in the local backend, the computed values as well as the `RResultPtr`s (or PyROOT result proxies). This is done because, the values held by RResultPtrs will not be in memory and will go out of scope if we don't store the RResultPtrs.
+* In local backend, you can also enable multithreading if you wish to. You can do that by running `ROOT.ROOT.EnableImplicitMT()`. You can disable it by `ROOT.ROOT.DisableImplicitMT()`.
+* Note that "Range" operation isn't supported in multithreading enabled environments.
+* Since local backend is the default backend, you don't have to do `PyRDF.use('local')`. Although, doing that will not be of any harm.
+
+### Spark backend
+* Spark backend is chosen by running `PyRDF.use('spark')`.
+* You can additionally pass in a configuration dictionary to the `PyRDF.use()` function. For example, you can run `PyRDF.use('spark', {'npartitions':4})`. The 'npartitions' parameter refers to the number of parts to divide the input dataset into.
+* The configuration dictionary accepts only 'npartitions' and all Spark configuration parameters. For Spark configuration parameters, refer to [Spark docs](https://spark.apache.org/docs/latest/configuration.html).
+* Note that, if the value of 'npartitions' is not set in the config dictionary, then it will be set to the value of `spark.executor.instances` from the config dictionary. If `spark.executor.instances` is also not set in the config dictionary, then `npartitions` will be set to `2`.
+* You can also make a `SparkContext` directly available for use. In such cases, the existing `SparkContext` would be **directly used, even if you pass in configuration parameters**.
+* If you want to run Spark with your own configuration parameters and you're not sure whether a `SparkContext` already exists, then simply run the following before running `PyRDF.use` : 
+```python
+from pyspark import SparkContext
+sc = SparkContext.getOrCreate()
+sc.stop()
+
+```
 
 Demos
 -----
+Refer to [https://github.com/shravan97/PyRDF/tree/master/demos](https://github.com/shravan97/PyRDF/tree/master/demos) sample Jupyter notebooks.
+
+Tutorials
+---------
+You can access the tutorials here : 
+[https://github.com/shravan97/PyRDF/tree/master/tutorials](https://github.com/shravan97/PyRDF/tree/master/tutorials)  
+The tutorials are divided based on the backend they use.
 
 Documentation
 -------------
@@ -164,16 +207,19 @@ Documentation
 ### User reference
 
 ### Developer reference
+Refer to the developer docs here : 
+[http://shravanmurali.com/PyRDF/Developer](http://shravanmurali.com/PyRDF/Developer)
 
-TODO
-----
+Possible future improvements
+----------------------------
 
 * Add support for more backends
 * Allow users to pass a `Backend` instance to `PyRDF.use`
 * Add support for accepting C++ mapper functions
 * Create a Jupyter extension at least to indicate the progress in Local execution
 
-Other links
+Quick links
 -----------
 
-(blogs)
+* [PyRDF Github](https://github.com/shravan97/PyRDF/)
+* [RDataFrame Docs](https://root.cern/doc/master/classROOT_1_1RDataFrame.html)

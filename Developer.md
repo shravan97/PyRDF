@@ -63,7 +63,7 @@
 		- Logic used : 
 			- If `get_head` is None , it is assumed that the current node is the head node. Hence, if `get_head` is `None`, `get_head` is lambda function that returns itself. Otherwise, it simply returns the head node.
 			- `get_head` points to a function that returns the head node instead of pointing to the head node itself. This is because, by using a function, the object gets garbage collected after the user stops referencing it. Whereas, if `get_head` points to the head node itself directly, then it will not be garbage collected by Python when the user stops referencing it. This logic plays an important role in pruning the graph before execution.
-			- `children` is set to an empty list and value is set to None initially.
+			- `children` is set to an empty list and `value` is set to `None` initially.
 
 	- **Instance data members**
 		- `operation` 
