@@ -13,8 +13,9 @@ Features
 
 * ### Execute [ROOT](https://root.cern.ch/) operations on Spark clusters without a mapper and a reducer function
 	- Spark usually expects you to give in a mapper and a reducer function for it to run a job. With PyRDF, all you need to do is to choose 'spark' as your desired backend and `PyRDF` does the rest for you. 
-	- For example, 
-```python
+	- For example,  
+
+```python 
 import PyRDF
 
 # This is the only extra statement.
@@ -28,7 +29,8 @@ PyRDF.use('spark', {'npartitions':4, 'spark.executor.instances':5})
 * ### Including C++ header files through `PyRDF.include` interface
 	- If you want to make use of a C++ function as a part of an operation, then you can declare the function in a separate file and include it using `PyRDF.include`. 
 	- `PyRDF.include` takes in a list of paths or a single path and it declares those files before execution, using ROOT interpreter.
-	- For example, if you've declared a function named `fun` inside `A.cpp`, this is how you should make use of the function : 
+	- For example, if you've declared a function named `fun` inside `A.cpp`, this is how you should make use of the function :  
+
 ```python
 import PyRDF
 
