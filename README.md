@@ -46,7 +46,8 @@ rdf = PyRDF.RDataFrame(10)
 rdf_filtered = rdf.Filter("fun(tdfentry_)")
 
 ### Rest of the processing here.
-```
+```  
+
 	- Note that you can include header files anytime before the start of execution. That means, you can include them even after defining operations !
 
 * ### Run ROOT operations in multithreaded mode in your local environment
@@ -63,10 +64,11 @@ Installation procedure
 
 * If you’re using Python 2, install enum34 as well
 	* `pip install enum34`  
-  
+
 
 * Clone PyRDF from github
 	* `git clone https://github.com/shravan97/PyRDF`  
+	
   
 
 * Install PyRDF
