@@ -20,7 +20,7 @@
 	- [Class : RDataFrame](#class--rdataframe)
 	- [Class : RDataFrameException](#class--rdataframeexception)
 - [`__init__.py`](#__init__py)
-	- [Module : `__init__.py`](#module--__init__py)
+	- [Module : `__init__.py`](#module--__init__)
 - [backend/Backend.py](#backendbackendpy)
 	- [Class : Backend](#class--backend)
 - [backend/Local.py](#backendlocalpy)
