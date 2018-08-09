@@ -6,7 +6,7 @@
 Introduction
 ------------
 
-A Python package named 'PyRDF' was built on top of [ROOT’s RDataFrame](https://root.cern/doc/master/classROOT_1_1RDataFrame.html), that makes it seamless to run RDataFrame operations with any distributed backend and without much effort. PyRDF internally creates a computational graph of all requested operations and executes it using [PyROOT](https://root.cern.ch/pyroot), only when required. Without this Python layer, one has to write a mapper function, a reducer function and manually set up a distributed environment (like Spark) to execute the operations on clusters. PyRDF also allows you to create your own backend to execute RDataFrame operations.
+A Python package named **_PyRDF_** was built on top of [ROOT’s RDataFrame](https://root.cern/doc/master/classROOT_1_1RDataFrame.html), that makes it seamless to run RDataFrame operations with any distributed backend and without much effort. PyRDF internally creates a computational graph of all requested operations and executes it using [PyROOT](https://root.cern.ch/pyroot), only when required. Without this Python layer, one has to write a mapper function, a reducer function and manually set up a distributed environment (like Spark) to execute the operations on clusters. PyRDF also allows you to create your own backend to execute RDataFrame operations.
 
 Features 
 --------
@@ -49,7 +49,7 @@ rdf_filtered = rdf.Filter("fun(tdfentry_)")
 ### Rest of the processing here.
 rdf_histogram = rdf_filtered.Histo1D(...)
 
-rdf_histogram.Draw() # You can also include you're files just before this line !
+rdf_histogram.Draw() # You can also include your files just before this line !
 ```
 
 * ### Run ROOT operations in multithreaded mode in your local environment
@@ -117,7 +117,7 @@ PyRDF.use('spark')
 In the current release, 'local' and 'spark' are the only 2 available backends. More built-in backends and user defined backends will be available in future releases. If you don't choose a backend using `PyRDF.use`, the default backend choice would be 'local'.
 
 **Some points to note**
- * If you choose a backend using `PyRDF.use`, you have to do it before making an operation calls to the `RDataFrame` object. Otherwise, it might result in a run-time error.
+ * If you choose a backend using `PyRDF.use`, you have to do it before making operation calls to the `RDataFrame` object. Otherwise, it might result in a run-time error.
 
 ```python
 import PyRDF
@@ -171,12 +171,12 @@ print(PyRDF.current_backend.supported_operations)
 
 * All the defined operations create a *__computational graph__*. Take a look at the example below that illustrates how a series of operations are converted into a computational graph.
 
-##### Defined operations
+**Defined operations**
 ```python
 import PyRDF
 
 # Initialize a RDataFrame object
-rdf = PyRDF.RDataFrame(...args...)
+rdf = PyRDF.RDataFrame(...args...) # This is the head node
 
 # Define your operations
 rdf_column_1 = rdf.Define(...) # Transformation
@@ -185,11 +185,11 @@ rdf_filtered_1 = rdf_column_1.Filter(...) # Transformation
 rdf_count_1 = rdf_filtered_1.Count(...) # Action
 rdf_histogram_1 = rdf_column_2.Histo1D(...) # Action
 ```
-##### Computational graph
+**Computational graph**
 ![sample_computational_graph](images/pyrdf_sample_graph.jpg)
 
 #### Step 5 : Get and display the results
-After you define all the operations, execution will not happen until you make a method call on a `Proxy` object. For example : 
+After you define all the operations, execution will not happen until you make a method call on a `Proxy` object. Note that all actions return a `Proxy` object as opposed to a `Node` object for transformations. For example : 
 ```python
 import PyRDF
 
@@ -197,32 +197,33 @@ import PyRDF
 rdf = PyRDF.RDataFrame(...args...)
 
 # Operations
-rdf_histogram = rdf.Histo1D(...)
+rdf_histogram = rdf.Histo1D(...) # rdf_histogram will be a Proxy object 
 
+# Method call on a Proxy object
 my_histogram_value = rdf_histogram.GetValue() # Computation happens here 
 
 
 ```
 
 * You can apply all the (non-dunder) methods on a proxy object that you would apply on the output value as well. For example, on a `Histo1D` proxy object, you can apply functions like `Draw`, `GetEntries`, `GetMean` ... etc. 
-* If you instead want a reference to the actual value instead of proxy, you use `GetValue`. In the above code snippet, `my_histogram_value` would refer to the actual `ROOT.TH1D` object. In the cases where the output is supposed to be an integer, you'd get a value of the `int` type on a `GetValue` call.
+* If you instead want a reference to the actual value instead of proxy, you can use `GetValue`. In the above code snippet, `my_histogram_value` would refer to the actual `ROOT.TH1D` object. In the cases where the output is supposed to be an integer, you'd get a value of the `int` type on a `GetValue` call.
 
 Information on different backends
 -----------------------------
 ### Local backend
 * The local backend runs all the computation in your local system.
-* After execution in the local backend, the computed values as well as the `RResultPtr`s (or PyROOT result proxies). This is done because, the values held by RResultPtrs will not be in memory and will go out of scope if we don't store the RResultPtrs.
-* In local backend, you can also enable multithreading if you wish to. You can do that by running `ROOT.ROOT.EnableImplicitMT()`. You can disable it by `ROOT.ROOT.DisableImplicitMT()`.
+* After execution in the local backend, the computed values as well as the `RResultPtr`s (or PyROOT result proxies) are stored. This is done because, the values held by RResultPtrs will not be in memory and will go out of scope if we don't store the RResultPtrs.
+* In local backend, you can also enable multithreading if you wish to. You can do that by running `ROOT.ROOT.EnableImplicitMT()`. You can disable it by running `ROOT.ROOT.DisableImplicitMT()`.
 * Note that "Range" operation isn't supported in multithreading enabled environments.
 * Since local backend is the default backend, you don't have to do `PyRDF.use('local')`. Although, doing that will not be of any harm.
 
 ### Spark backend
 * Spark backend is chosen by running `PyRDF.use('spark')`.
-* You can additionally pass in a configuration dictionary to the `PyRDF.use()` function. For example, you can run `PyRDF.use('spark', {'npartitions':4})`. The 'npartitions' parameter refers to the number of parts to divide the input dataset into.
-* The configuration dictionary accepts only 'npartitions' and all Spark configuration parameters. For Spark configuration parameters, refer to [Spark docs](https://spark.apache.org/docs/latest/configuration.html).
+* You can additionally pass in a configuration dictionary to the `PyRDF.use()` function. For example, you can run `PyRDF.use('spark', {'npartitions':4})`. The `npartitions` parameter refers to the number of parts to divide the input dataset into, for processing.
+* The configuration dictionary accepts only `npartitions` and all Spark configuration parameters. For Spark configuration parameters, refer to [Spark docs](https://spark.apache.org/docs/latest/configuration.html).
 * Note that, if the value of 'npartitions' is not set in the config dictionary, then it will be set to the value of `spark.executor.instances` from the config dictionary. If `spark.executor.instances` is also not set in the config dictionary, then `npartitions` will be set to `2`.
 * You can also make a `SparkContext` directly available for use. In such cases, the existing `SparkContext` would be **directly used, even if you pass in configuration parameters**.
-* If you want to run Spark with your own configuration parameters and you're not sure whether a `SparkContext` already exists, then simply run the following before running `PyRDF.use` :  
+* If you want to run Spark with your own configuration parameters and you're not sure whether a `SparkContext` already exists, then simply run the following before `PyRDF.use` :  
 
 ```python
 from pyspark import SparkContext
@@ -233,13 +234,14 @@ sc.stop()
 
 Demos
 -----
-Refer to [https://github.com/shravan97/PyRDF/tree/master/demos](https://github.com/shravan97/PyRDF/tree/master/demos) sample Jupyter notebooks.
+Refer to [https://github.com/shravan97/PyRDF/tree/master/demos](https://github.com/shravan97/PyRDF/tree/master/demos) for sample Jupyter notebooks.
 
 Tutorials
 ---------
 You can access the tutorials here : 
 [https://github.com/shravan97/PyRDF/tree/master/tutorials](https://github.com/shravan97/PyRDF/tree/master/tutorials)  
-The tutorials are divided based on the backend they use.
+
+*The tutorials are divided based on the backend they use*
 
 Documentation
 -------------
