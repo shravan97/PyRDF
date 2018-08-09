@@ -6,7 +6,49 @@
 Introduction
 ------------
 
-A Python layer named 'PyRDF' was built on top of [ROOT’s RDataFrame](https://root.cern/doc/master/classROOT_1_1RDataFrame.html), making it seamless to run RDataFrame operations with any distributed backend and without much effort. PyRDF internally creates a computational graph of all requested operations and executes it using [PyROOT](https://root.cern.ch/pyroot), only when required. Without this Python layer, one has to write a mapper function, a reducer function and manually set up a distributed environment (like Spark) to execute the operations on clusters. PyRDF also allows you to create your own backend to execute RDataFrame operations.
+A Python package named 'PyRDF' was built on top of [ROOT’s RDataFrame](https://root.cern/doc/master/classROOT_1_1RDataFrame.html), that makes it seamless to run RDataFrame operations with any distributed backend and without much effort. PyRDF internally creates a computational graph of all requested operations and executes it using [PyROOT](https://root.cern.ch/pyroot), only when required. Without this Python layer, one has to write a mapper function, a reducer function and manually set up a distributed environment (like Spark) to execute the operations on clusters. PyRDF also allows you to create your own backend to execute RDataFrame operations.
+
+Features 
+--------
+
+* ### Execute [ROOT](https://root.cern.ch/) operations on Spark clusters without a mapper and a reducer function
+	- Spark usually expects you to give in a mapper and a reducer function for it to run a job. With PyRDF, all you need to do is to choose 'spark' as your desired backend and `PyRDF` does the rest for you. 
+	- For example, 
+```python
+import PyRDF
+
+# This is the only extra statement.
+PyRDF.use('spark')
+
+# Or you can also add configuration parameters.
+PyRDF.use('spark', {'npartitions':4, 'spark.executor.instances':5})
+
+### All of your operations here
+```
+* ### Including C++ header files through `PyRDF.include` interface
+	- If you want to make use of a C++ function as a part of an operation, then you can declare the function in a separate file and include it using `PyRDF.include`. 
+	- `PyRDF.include` takes in a list of paths or a single path and it declares those files before execution, using ROOT interpreter.
+	- For example, if you've declared a function named `fun` inside `A.cpp`, this is how you should make use of the function : 
+```python
+import PyRDF
+
+PyRDF.use('spark')
+PyRDF.include("/path/to/A.cpp")
+
+rdf = PyRDF.RDataFrame(10)
+
+# Notice the function call inside 'Filter' here. 'tdfentry_'
+# here represents each integer in the RDataFrame range, i.e., between
+# 0 to 9. Remember that your C++ function should always return a
+# boolean for 'Filter' to work.
+rdf_filtered = rdf.Filter("fun(tdfentry_)")
+
+### Rest of the processing here.
+```
+	- Note that you can include header files anytime before the start of execution. That means, you can include them even after defining operations !
+
+* ### Run ROOT operations in multithreaded mode in your local environment
+	- `PyRDF` also supports running ROOT operations in multithreaded mode. All you have to do is add the following statement before start of computation : `ROOT.ROOT.EnableImplicitMT()`.
 
 Installation procedure
 ----------------------
@@ -19,11 +61,11 @@ Installation procedure
 
 * If you’re using Python 2, install enum34 as well
 	* `pip install enum34`  
-
+  
 
 * Clone PyRDF from github
 	* `git clone https://github.com/shravan97/PyRDF`  
-
+  
 
 * Install PyRDF
 	* `python setup.py install`  
@@ -216,10 +258,10 @@ Refer to the developer docs here :
 Possible future improvements
 ----------------------------
 
-* Add support for more backends
+* Make PyRDF available for use on [SWAN](https://swan.web.cern.ch/)
+* Integrate PyRDF with PyROOT’s RDataFrame
 * Allow users to pass a `Backend` instance to `PyRDF.use`
 * Add support for accepting C++ mapper functions
-* Create a Jupyter extension at least to indicate the progress in Local execution
 
 Quick links
 -----------
