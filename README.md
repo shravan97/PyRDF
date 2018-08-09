@@ -29,6 +29,7 @@ PyRDF.use('spark', {'npartitions':4, 'spark.executor.instances':5})
 * ### Including C++ header files through `PyRDF.include` interface
 	- If you want to make use of a C++ function as a part of an operation, then you can declare the function in a separate file and include it using `PyRDF.include`. 
 	- `PyRDF.include` takes in a list of paths or a single path and it declares those files before execution, using ROOT interpreter.
+	- Note that you can include header files anytime before the start of execution. That means, you can include them even after defining operations !
 	- For example, if you've declared a function named `fun` inside `A.cpp`, this is how you should make use of the function :  
 
 ```python
@@ -46,9 +47,10 @@ rdf = PyRDF.RDataFrame(10)
 rdf_filtered = rdf.Filter("fun(tdfentry_)")
 
 ### Rest of the processing here.
-```  
+rdf_histogram = rdf_filtered.Histo1D(...)
 
-	- Note that you can include header files anytime before the start of execution. That means, you can include them even after defining operations !
+rdf_histogram.Draw() # You can also include you're files just before this line !
+```
 
 * ### Run ROOT operations in multithreaded mode in your local environment
 	- `PyRDF` also supports running ROOT operations in multithreaded mode. All you have to do is add the following statement before start of computation : `ROOT.ROOT.EnableImplicitMT()`.
@@ -56,23 +58,12 @@ rdf_filtered = rdf.Filter("fun(tdfentry_)")
 Installation procedure
 ----------------------
 
-* Install ROOT library. It is recommended to install the most recent version of ROOT. Nonetheless, the installed version of ROOT at least has to be `6.15/01`.
-
-
+* Install ROOT library. It is recommended to install the most recent version of ROOT. Nonetheless, the installed version of ROOT has to be at least `6.15`.
 * You can find ROOT installation instructions here : [https://root.cern.ch/building-root](https://root.cern.ch/building-root)
-
-
-* If you’re using Python 2, install enum34 as well
-	* `pip install enum34`  
-
-
 * Clone PyRDF from github
-	* `git clone https://github.com/shravan97/PyRDF`  
-	
-  
-
+	- `git clone https://github.com/shravan97/PyRDF`  
 * Install PyRDF
-	* `python setup.py install`  
+	- `python setup.py install`  or `python3 setup.py install`
 
 Usage
 -----
@@ -257,7 +248,11 @@ Documentation
 
 ### Developer reference
 Refer to the developer docs here : 
-[http://shravanmurali.com/PyRDF/Developer](http://shravanmurali.com/PyRDF/Developer)
+[http://shravanmurali.com/PyRDF/Developer](http://shravanmurali.com/PyRDF/Developer)  
+
+
+[**Note**:- It is recommended to read the [ROOT docs and tutorials](https://root.cern.ch) before starting with PyRDF]  
+
 
 Possible future improvements
 ----------------------------
