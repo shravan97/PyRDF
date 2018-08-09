@@ -245,6 +245,7 @@ You can access the tutorials here :
 
 Documentation
 -------------
+If you want to dig deeper into the internals of `PyRDF` or want to contribute to `PyRDF`, check out the developer docs. Else, you can take a look at the user docs.
 
 ### User reference
 
