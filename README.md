@@ -6,14 +6,14 @@
 Introduction
 ------------
 
-A Python package named **_PyRDF_** was built on top of [ROOT’s RDataFrame](https://root.cern/doc/master/classROOT_1_1RDataFrame.html), that makes it seamless to run RDataFrame operations with any distributed backend and without much effort. PyRDF internally creates a computational graph of all requested operations and executes it using [PyROOT](https://root.cern.ch/pyroot), only when required. Without this Python layer, one has to write a mapper function, a reducer function and manually set up a distributed environment (like Spark) to execute the operations on clusters. PyRDF also allows you to create your own backend to execute RDataFrame operations.
+This project builds on top of [ROOT's RDataFrame](https://root.cern/doc/master/classROOT_1_1RDataFrame.html), a tool developed at CERN to do declarative data analysis. The objective of the project was to make it possible for a RDataFrame analysis to run on distributed resources with no changes to its original code. For that purpose, a Python layer on top of RDataFrame has been developed under the name of PyRDF. The PyRDF library is able to dynamically construct a computational graph for an RDataFrame analysis and then run it on the execution backend selected by the user. A Spark backend has been implemented, thus making it possible to run an RDataFrame analysis on Spark resources.
 
 Features 
 --------
 
-* ### Execute [ROOT](https://root.cern.ch/) operations on Spark clusters without a mapper and a reducer function
-	- Spark usually expects you to give in a mapper and a reducer function for it to run a job. With PyRDF, all you need to do is to choose 'spark' as your desired backend and `PyRDF` does the rest for you. 
-	- For example,  
+* ### Select and configure the execution backend you want to use
+	- With PyRDF, selection of a backend is as simple as a function call.
+	- `PyRDF.use` accepts the backend name as a string and an optional configuration dictionary.  
 
 ```python 
 import PyRDF
@@ -25,8 +25,40 @@ PyRDF.use('spark')
 PyRDF.use('spark', {'npartitions':4, 'spark.executor.instances':5})
 
 ### All of your operations here
+```  
+	- It is recommended to choose your backend before defining the respective operations that you want to execute with your respective backend.
+	- If you don't choose a backend using `PyRDF.use`, local is taken as the default backend choice.
+
+* ### Execute your analyses both locally and on Spark without changing your RDataFrame code 
+	- Spark usually expects you to give in a mapper and a reducer function for it to run a job. With PyRDF, all you need to do is to choose 'spark' as your desired backend and `PyRDF` does the rest for you. 
+	- For example,  
+
+**Local Execution**
+```python
+import PyRDF
+
+rdf = PyRDF.RDataFrame(10)
+
+rdf_filtered = rdf.Filter("tdfentry_ < 5")
+rdf_histogram = rdf_filtered.Histo1D("tdfentry_")
+
+rdf_histogram.Draw()
 ```
-* ### Including C++ header files through `PyRDF.include` interface
+
+**Spark Execution**
+```python
+import PyRDF
+
+PyRDF.use('spark') # Only extra statement
+
+rdf = PyRDF.RDataFrame(10)
+
+rdf_filtered = rdf.Filter("tdfentry_ < 5")
+rdf_histogram = rdf_filtered.Histo1D("tdfentry_")
+
+rdf_histogram.Draw()
+```
+* ### Easily include C++ header files to be used from your analysis
 	- If you want to make use of a C++ function as a part of an operation, then you can declare the function in a separate file and include it using `PyRDF.include`. 
 	- `PyRDF.include` takes in a list of paths or a single path and it declares those files before execution, using ROOT interpreter.
 	- Note that you can include header files anytime before the start of execution. That means, you can include them even after defining operations !
@@ -51,9 +83,6 @@ rdf_histogram = rdf_filtered.Histo1D(...)
 
 rdf_histogram.Draw() # You can also include your files just before this line !
 ```
-
-* ### Run ROOT operations in multithreaded mode in your local environment
-	- `PyRDF` also supports running ROOT operations in multithreaded mode. All you have to do is add the following statement before start of computation : `ROOT.ROOT.EnableImplicitMT()`.
 
 Installation procedure
 ----------------------
@@ -117,16 +146,10 @@ PyRDF.use('spark')
 In the current release, 'local' and 'spark' are the only 2 available backends. More built-in backends and user defined backends will be available in future releases. If you don't choose a backend using `PyRDF.use`, the default backend choice would be 'local'.
 
 **Some points to note**
- * If you choose a backend using `PyRDF.use`, you have to do it before making operation calls to the `RDataFrame` object. Otherwise, it might result in a run-time error.
+ * If you choose a backend using `PyRDF.use`, you have to do it before making operation calls to the `RDataFrame` object.
 
 ```python
 import PyRDF
-
-#### This is wrong 
-rdf = PyRDF.RDataFrame(...args...)
-rdf_filtered = PyRDF.Filter(...)
-my_histogram = rdf_filtered.Histo1D(...)
-PyRDF.use('spark')
 
 #### This is correct 
 PyRDF.use('spark')
@@ -136,24 +159,30 @@ my_histogram = rdf_filtered.Histo1D(...)
 ```
 
 * If you don't want to switch between backends, always make it a point to select the backend right after importing `PyRDF`.
-* If you want to work in your local environment only, then you don't have to include the `PyRDF.use` statement.
+* If you do not specify any backend with `PyRDF.use`, the default local backend will be used.
 * `PyRDF.use` also accepts a configuration dictionary (named `config`) along with the backend name. Refer to the user documentation for more information.
 
 #### Step 3 : Create a RDataFrame instance
-The RDataFrame constructor for PyRDF is same as that of PyROOT’s. Hence you can refer to [PyROOT’s RDataFrame documentation](https://root.cern/doc/master/classROOT_1_1RDataFrame.html#a0813d17002d46c962513acb96ddc8d57) for information regarding the constructor. There are also some additional cases that the PyRDF’s RDataFrame constructor supports. Refer to the user documentation for more information.  
+In order to construct a RDataFrame object using PyRDF, you can use any of the constructors specified in the [ROOT's RDataFrame documentation](https://root.cern/doc/master/classROOT_1_1RDataFrame.html#a0813d17002d46c962513acb96ddc8d57). Moreover, PyRDF's RDataFrame constructor is more flexible and accepts Python lists in place of C++ vectors in ROOT's RDataFrame.  
+(see [PyRDF documentation](http://shravanmurali.com/PyRDF-Docs/docs/PyRDF.html) for more information)  
+
 Here are some examples for creating `RDataFrame` instances : 
 ```python
 import PyRDF
-# Example 1
+
+# In this case, the argument `10` represents the
+# number of entries.
 rdataframe_1 = PyRDF.RDataFrame(10)
 
-# Example 2
-rdataframe_2 = PyRDF.RDataFrame("myTreeName", "/path/to/my/root/file")
+# In this case, 'myTreeName' represents the name of the 'ROOT.TTree'
+# object that is stored in the given file.
+rdataframe_2 = PyRDF.RDataFrame("myTreeName", "/path/to/my/root/file.root")
 
-# Example 3
+# This case is same as above except that the file will be read from the URL.
 rdataframe_3 = PyRDF.RDataFrame("myTreeName", "http://example.com/file.root")
 
-# Example 4
+# In this case, data from multiple files ("file1.root" and "file2.root") are
+# combined to represent the RDataFrame object.
 rdataframe_4 = PyRDF.RDataFrame("myTreeName", ["file1.root", "file2.root"])
 
 ```
@@ -189,7 +218,7 @@ rdf_histogram_1 = rdf_column_2.Histo1D(...) # Action
 ![sample_computational_graph](images/pyrdf_sample_graph.jpg)
 
 #### Step 5 : Get and display the results
-After you define all the operations, execution will not happen until you make a method call on a `Proxy` object. Note that all actions return a `Proxy` object as opposed to a `Node` object for transformations. For example : 
+After you define all the operations, execution will not happen until you make a method call on the result of an action, which is implemented by a `Proxy` object. Note that all actions return a `Proxy` object as opposed to a `Node` object for transformations. For example : 
 ```python
 import PyRDF
 
@@ -212,9 +241,7 @@ Information on different backends
 -----------------------------
 ### Local backend
 * The local backend runs all the computation in your local system.
-* After execution in the local backend, the computed values as well as the `RResultPtr`s (or PyROOT result proxies) are stored. This is done because, the values held by RResultPtrs will not be in memory and will go out of scope if we don't store the RResultPtrs.
 * In local backend, you can also enable multithreading if you wish to. You can do that by running `ROOT.ROOT.EnableImplicitMT()`. You can disable it by running `ROOT.ROOT.DisableImplicitMT()`.
-* Note that "Range" operation isn't supported in multithreading enabled environments.
 * Since local backend is the default backend, you don't have to do `PyRDF.use('local')`. Although, doing that will not be of any harm.
 
 ### Spark backend
@@ -222,7 +249,7 @@ Information on different backends
 * You can additionally pass in a configuration dictionary to the `PyRDF.use()` function. For example, you can run `PyRDF.use('spark', {'npartitions':4})`. The `npartitions` parameter refers to the number of parts to divide the input dataset into, for processing.
 * The configuration dictionary accepts only `npartitions` and all Spark configuration parameters. For Spark configuration parameters, refer to [Spark docs](https://spark.apache.org/docs/latest/configuration.html).
 * Note that, if the value of 'npartitions' is not set in the config dictionary, then it will be set to the value of `spark.executor.instances` from the config dictionary. If `spark.executor.instances` is also not set in the config dictionary, then `npartitions` will be set to `2`.
-* You can also make a `SparkContext` directly available for use. In such cases, the existing `SparkContext` would be **directly used, even if you pass in configuration parameters**.
+* The Spark backend will create a `SparkContext` with the configuration parameters received, if any. However, if a SparkContext already exists, it will be **directly used, even if you pass in configuration parameters**. 
 * If you want to run Spark with your own configuration parameters and you're not sure whether a `SparkContext` already exists, then simply run the following before `PyRDF.use` :  
 
 ```python
@@ -263,7 +290,6 @@ Possible future improvements
 * Make PyRDF available for use on [SWAN](https://swan.web.cern.ch/)
 * Integrate PyRDF with PyROOT’s RDataFrame
 * Allow users to pass a `Backend` instance to `PyRDF.use`
-* Add support for accepting C++ mapper functions
 
 Quick links
 -----------
