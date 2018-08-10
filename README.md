@@ -274,7 +274,7 @@ Documentation
 If you want to dig deeper into the internals of `PyRDF` or want to contribute to `PyRDF`, check out the developer docs. Else, you can take a look at the user docs.
 
 ### User reference
-[http://shravanmurali.com/PyRDF-Docs/docs/PyRDF.html](http://shravanmurali.com/PyRDF-Docs/docs/PyRDF.html)  
+[http://shravanmurali.com/PyRDF-User/PyRDF.html](http://shravanmurali.com/PyRDF-User/PyRDF.html)  
 
 ### Developer reference
 Refer to the developer docs here : 
