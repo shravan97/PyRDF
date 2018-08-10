@@ -26,8 +26,7 @@ PyRDF.use('spark', {'npartitions':4, 'spark.executor.instances':5})
 
 ### All of your operations here
 ```  
-	- It is recommended to choose your backend before defining the respective operations that you want to execute with your respective backend.
-	- If you don't choose a backend using `PyRDF.use`, local is taken as the default backend choice.
+It is recommended to choose your backend before defining the respective operations that you want to execute with your respective backend. If you don't choose a backend using `PyRDF.use`, local is taken as the default backend choice.
 
 * ### Execute your analyses both locally and on Spark without changing your RDataFrame code 
 	- Spark usually expects you to give in a mapper and a reducer function for it to run a job. With PyRDF, all you need to do is to choose 'spark' as your desired backend and `PyRDF` does the rest for you. 
