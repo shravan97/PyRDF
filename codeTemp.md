@@ -1,4 +1,4 @@
-"""python
+```python
 
 rdf = ROOT.ROOT.RDataFrame(...)
 
@@ -18,4 +18,4 @@ dTree = DistTree(...)
 
 values = dTree.ProcessAndMerge(mapper, reducer)
 values[1].Draw()
-"""
+```
